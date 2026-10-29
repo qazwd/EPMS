@@ -1,0 +1,49 @@
+version: '3.9'
+
+services:
+  web:
+    build: .
+    restart: always
+    env_file: .env
+    volumes:
+      - static_volume:/app/staticfiles
+    depends_on:
+      - db
+    command: gunicorn epms_backend.wsgi:application --bind 0.0.0.0:8000 --env DJANGO_SETTINGS_MODULE=epms_backend.settings.prod
+    ports:
+      - "8000:8000"  # 本地端口:容器端口，必须保留此映射，否则无法访问容器内的Django应用
+
+  db:
+    # image: postgres:14
+    image: mysql:8.0  # 使用MySQL 8.0（稳定版）
+    restart: always
+    env_file: .env
+    volumes:
+      # - postgres_data:/var/lib/postgresql/data/
+      - mysql_data:/var/lib/mysql
+    environment:
+      - MYSQL_DATABASE=${DB_NAME}
+      - MYSQL_USER=${DB_USER}
+      - MYSQL_PASSWORD=${DB_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
+    ports:
+          - "3307:3306"  # 将主机端口从3306改为3307（容器内部仍用3306）
+  nginx:
+    image: nginx:1.21
+    restart: always
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - static_volume:/home/app/staticfiles
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    depends_on:
+      - web
+    ports:
+      - "80:80"
+      - "443:443"
+    
+
+volumes:
+  #postgres_data:
+  mysql_data:
+  static_volume:
