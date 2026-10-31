@@ -2337,7 +2337,7 @@
                 // 加载数据
                 fetchData().then(data => {
                     dataset = data;
-                    // console.log("数据加载成功:", data);
+                    // console.log("数据加载成功:", dataset);
                     loadProjects(dataset.projects);
                     loadReports(dataset.reports, dataset.projects);
                     populateProjectNames();
@@ -2569,7 +2569,7 @@
                         password: passwordInput.value
                     })
                 });
-                const data = await response.json();  // 先解析所有响应（成功/失败都要解析）
+                const data = await response.json();
                 // console.log('登录响应:', data);
 
                 if (response.ok) {
@@ -2583,7 +2583,7 @@
                     sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
 
                     // 更新UI显示用户信息
-                    userName.textContent = currentUser.name || '匿名用户';
+                    userName.textContent = currentUser.username || '匿名用户';
                     userType.textContent = currentUser.department || '无';
                     userAvatar.textContent = currentUser.avatar || 'A'
                     userRoleDisplay.textContent = currentUser.type || '无';
@@ -2716,23 +2716,6 @@
                 logs: []
             };
         });
-
-        // 浏览器关闭时清理登录状态
-        // 监听页面卸载事件（浏览器关闭、刷新等）
-        // window.addEventListener('beforeunload', function(event) {
-        //     // 检查是否有用户登录
-        //     const savedUser = localStorage.getItem('currentUser');
-        //     if (savedUser) {
-        //         // 清除登录状态
-        //         localStorage.removeItem('currentUser');
-        //         console.log('登录状态已清除');
-        //     }
-        // });
-        // document.addEventListener('visibilitychange', function() {
-        //     if (document.visibilityState === 'hidden') {
-        //         // 页面隐藏时的处理（可选）
-        //     }
-        // });
 
         // 菜单切换功能
         menuItems.forEach(item => {
@@ -5348,36 +5331,6 @@
                 document.getElementById('detail-project-dev-people').textContent = currentProject.developers || '无';
             }
         });
-
-        // 查看周报详情按钮事件委托
-        // document.addEventListener('click', (e) => {
-        //     if (e.target.classList.contains('view-report')) {
-        //         viewReportModal.style.display = 'flex';
-
-        //         const reportRow = e.target.closest('tr'); // 找到当前点击的<tr>元素，并获取其自定义属性中的项目ID
-        //         const reportId = parseInt(reportRow.dataset.reportId); // 从<tr>的自定义属性中获取项目ID（转成数字，避免类型不匹配）
-
-        //         const currentReport = dataset?.reports.find(item => item.id === reportId);
-
-        //         if (!currentReport) {
-        //             alert('未找到该周报数据，请刷新页面重试');
-        //             viewReportModal.style.display = 'none';
-        //             return;
-        //         }
-        //         const reportProject = dataset?.projects.find(p => p.id === currentReport.project);
-        //         const projectName = reportProject ? reportProject.project_name : '未知项目';
-
-
-        //         // 这里应该是查看周报详情的逻辑
-        //         document.getElementById('detail-report-project-name').textContent = projectName;
-        //         document.getElementById('detail-report-title').textContent = currentReport.report_title || '无';
-        //         document.getElementById('detail-report-author').textContent = currentReport.report_author || '无';
-        //         document.getElementById('detail-report-date').textContent = currentReport.report_date || '无';
-        //         document.getElementById('detail-report-content').textContent = currentReport.report_content || '无';
-        //         document.getElementById('detail-report-plan').textContent = currentReport.plan || '无';
-        //         document.getElementById('detail-report-issue').textContent = currentReport.issues || '无';
-        //     }
-        // });
 
         // 查看用户按钮事件委托
         document.addEventListener('click', (e) => {

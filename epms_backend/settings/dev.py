@@ -1,5 +1,19 @@
 from .base import *  # 继承公共配置
+import os
 
+
+# 确保数据库目录存在（若不存在则自动创建）
+DB_DIR = BASE_DIR / 'database'
+if not DB_DIR.exists():
+    DB_DIR.mkdir(parents=True, exist_ok=True)
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = 'django-insecure-crwf+0+r-d1(!bad+tta1cg-evg3tn1n)!bi)meys096%qo0x&'
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': DB_DIR / 'api-dev.sqlite3', 
+    }
+}
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-crwf+0+r-d1(!bad+tta1cg-evg3tn1n)!bi)meys096%qo0x&'
@@ -85,7 +99,7 @@ USE_TZ = True
 # 方法二：
 # python manage.py runserver --settings=epms_backend.settings.dev
 
-# 启动后，访问 http://127.0.0.1:8000/api/static/企业项目管理系统.html 即可看到登陆页面
+# 启动后，访问 http://127.0.0.1:8000/ 即可看到登陆页面
 
 # 初始登陆
 # 用户名：admin
