@@ -929,8 +929,8 @@
                 <div class="form-group">
                     <button id="login-btn" class="btn btn-primary" style="width: 100%;">登录</button>
                 </div>
-                <div class="form-group" style="text-align: center;">
-                    <!-- <p>测试账号: admin / admin123 (管理员) 或 user / user123 (实施人员)</p> -->
+                <div class="form-group">
+                    <p style="text-align: center; width: 100%; margin: 0;">测试账号: admin / 11111 (管理员) <br>  user / 11111 (实施人员)</p>
                 </div>
             </div>
         </div>
@@ -2312,7 +2312,12 @@
                 // 恢复用户信息
                 currentUser = JSON.parse(savedUser);
                 // console.log("恢复登录状态:", currentUser);
-                currentUser.type = '管理人员'; //-------------------------------------------------
+                // 根据用户名设置用户类型
+                if (currentUser.username === 'admin') {
+                    currentUser.type = '管理人员';
+                } else if (currentUser.username === 'user') {
+                    currentUser.type = '实施人员';
+                }
                 dataset.currentUser = currentUser;
                 // console.log("恢复登录状态:", dataset.currentUser);
                 
@@ -2560,30 +2565,39 @@
                 return;
             }
 
-            try {
-                // 发送登录请求到后端
-                const response = await fetch(BASE_URL + 'user/login/', {  // 假设你的API前缀是/api/
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': csrftoken
-                    },
-                    body: JSON.stringify({
-                        username: usernameInput.value,
-                        password: passwordInput.value
-                    })
-                });
-                const data = await response.json();
-                // console.log('登录响应:', data);
+            // 前端直接验证登录（不请求后端）
+            const inputUsername = usernameInput.value.trim();
+            const inputPassword = passwordInput.value.trim();
 
-                if (response.ok) {
+            if ((inputUsername === 'admin' && inputPassword === '11111') ||
+                (inputUsername === 'user' && inputPassword === '11111')) {
 
-                    // 登录成功，保存请求返回的用户信息
-                    dataset.currentUser = data.user_info
-                    currentUser = dataset.currentUser;
+                    // 登录成功，根据用户名构建当前用户信息
+                    if (inputUsername === 'admin') {
+                        currentUser = {
+                            id: 1,
+                            username: 'admin',
+                            name: '管理员',
+                            type: '管理人员',
+                            phone: '13800138000',
+                            department: '项目经理',
+                            status: '正常',
+                            avatar: 'A'
+                        };
+                    } else {
+                        currentUser = {
+                            id: 2,
+                            username: 'user',
+                            name: '张三',
+                            type: '实施人员',
+                            phone: '13800138001',
+                            department: '开发工程师',
+                            status: '忙碌',
+                            avatar: '张'
+                        };
+                    }
+                    dataset.currentUser = currentUser;
                     // console.log('登录后的currentUser:', currentUser);
-                    currentUser.type = '管理人员';  //-------------------------------------------------
-                    // console.log('登录后的currentUser(ALL):', currentUser);
 
                     // 登陆成功，保存登陆信息到本地
                     sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
@@ -2684,11 +2698,7 @@
                     // }, 0);
 
                 } else {
-                    alert(data.error || '登录失败，请检查用户名和密码');
-                }
-            } catch (error) {
-                // console.error('登录请求失败:', error);
-                alert('服务器连接失败，请稍后再试');
+                alert('用户名或密码错误，请重新输入！');
             }
         });
 
