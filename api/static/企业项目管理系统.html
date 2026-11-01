@@ -2312,7 +2312,6 @@
                 // 恢复用户信息
                 currentUser = JSON.parse(savedUser);
                 // console.log("恢复登录状态:", currentUser);
-                currentUser.type = '管理人员'; //-------------------------------------------------
                 dataset.currentUser = currentUser;
                 // console.log("恢复登录状态:", dataset.currentUser);
                 
@@ -2582,7 +2581,6 @@
                     dataset.currentUser = data.user_info
                     currentUser = dataset.currentUser;
                     // console.log('登录后的currentUser:', currentUser);
-                    currentUser.type = '管理人员';  //-------------------------------------------------
                     // console.log('登录后的currentUser(ALL):', currentUser);
 
                     // 登陆成功，保存登陆信息到本地
