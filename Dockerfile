@@ -1,11 +1,13 @@
 # ====================
 # 第一阶段：构建依赖（命名为 builder）
 # ====================
-FROM python:3.10-slim-bullseye AS builder
+FROM python:3.11-slim-bookworm AS builder
 
 # 设置国内 APT 源（加速依赖安装）
-RUN sed -i 's/deb.debian.org/mirrors.aliyun.com/g' /etc/apt/sources.list && \
-    sed -i 's/security.debian.org/mirrors.aliyun.com\/debian-security/g' /etc/apt/sources.list
+RUN rm -f /etc/apt/sources.list.d/debian.sources && \
+    echo "deb http://mirrors.aliyun.com/debian bookworm main contrib non-free non-free-firmware" > /etc/apt/sources.list && \
+    echo "deb http://mirrors.aliyun.com/debian bookworm-updates main contrib non-free non-free-firmware" >> /etc/apt/sources.list && \
+    echo "deb http://mirrors.aliyun.com/debian-security bookworm-security main contrib non-free non-free-firmware" >> /etc/apt/sources.list
 
 # 安装构建依赖
 RUN apt-get update && \
@@ -19,7 +21,7 @@ RUN apt-get update && \
 WORKDIR /app
 
 # 复制依赖文件
-COPY requirements.txt .
+COPY environment/requirements.txt .
 
 # 设置国内 PIP 源（加速依赖下载）
 RUN pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
@@ -31,11 +33,13 @@ RUN pip wheel --no-cache-dir --no-deps --wheel-dir /app/wheels -r requirements.t
 # ====================
 # 第二阶段：生产环境
 # ====================
-FROM python:3.10-slim-bullseye
+FROM python:3.11-slim-bookworm
 
 # 设置国内 APT 源
-RUN sed -i 's/deb.debian.org/mirrors.aliyun.com/g' /etc/apt/sources.list && \
-    sed -i 's/security.debian.org/mirrors.aliyun.com\/debian-security/g' /etc/apt/sources.list
+RUN rm -f /etc/apt/sources.list.d/debian.sources && \
+    echo "deb http://mirrors.aliyun.com/debian bookworm main contrib non-free non-free-firmware" > /etc/apt/sources.list && \
+    echo "deb http://mirrors.aliyun.com/debian bookworm-updates main contrib non-free non-free-firmware" >> /etc/apt/sources.list && \
+    echo "deb http://mirrors.aliyun.com/debian-security bookworm-security main contrib non-free non-free-firmware" >> /etc/apt/sources.list
 
 # 安装运行时依赖
 RUN apt-get update && \
@@ -59,8 +63,11 @@ RUN pip install --no-cache /wheels/*
 # 复制项目代码
 COPY . .
 
+# 设置 Django 配置模块
+ENV DJANGO_SETTINGS_MODULE=epms_backend.settings.dev
+
 # 暴露端口
 EXPOSE 8000
 
-# 运行应用
-CMD ["gunicorn", "epms_backend.wsgi:application", "--bind", "0.0.0.0:8000"]
+# 数据库迁移 + 启动应用
+CMD python manage.py makemigrations && python manage.py migrate && gunicorn epms_backend.wsgi:application --bind 0.0.0.0:8000

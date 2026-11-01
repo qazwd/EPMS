@@ -3,9 +3,11 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from django.contrib.auth import authenticate
+from django.views.decorators.csrf import csrf_exempt
 from api.models import UsersInfo
 
 @api_view(['POST'])
+@csrf_exempt
 def user_login(request):
     '''
     用户登录接口

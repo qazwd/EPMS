@@ -1,0 +1,11 @@
+name: TianTu
+channels:
+  - defaults
+dependencies:
+  - python=3.11
+  - django
+  - djangorestframework
+  - django-cors-headers
+  - fastapi
+  - sqlalchemy
+prefix: D:\Operation\Anaconda\1-Miniconda3-latest-Windows-x86_64\envs\TianTu

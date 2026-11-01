@@ -2307,17 +2307,20 @@
         // 页面加载时恢复登录状态（刷新）
         window.addEventListener('load', () => {
             const savedUser = sessionStorage.getItem('currentUser');
+            // console.log("尝试恢复登录状态:", savedUser);
             if (savedUser) {
                 // 恢复用户信息
                 currentUser = JSON.parse(savedUser);
+                // console.log("恢复登录状态:", currentUser);
                 dataset.currentUser = currentUser;
+                // console.log("恢复登录状态:", dataset.currentUser);
                 
                 // 切换到主应用界面
                 loginPage.style.display = 'none';
                 app.style.display = 'flex';
                 
                 // 更新UI显示用户信息
-                userName.textContent = currentUser.name || '匿名用户';
+                userName.textContent = currentUser.username || '匿名用户';
                 userType.textContent = currentUser.department || '无';
                 userAvatar.textContent = currentUser.avatar || 'A';
                 userRoleDisplay.textContent = currentUser.type || '无';
@@ -2577,7 +2580,7 @@
                     // 登录成功，保存请求返回的用户信息
                     dataset.currentUser = data.user_info
                     currentUser = dataset.currentUser;
-                    // console.log('currentUser:', currentUser);
+                    console.log('登录后的currentUser:', currentUser);
 
                     // 登陆成功，保存登陆信息到本地
                     sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
