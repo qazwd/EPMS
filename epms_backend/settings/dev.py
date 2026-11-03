@@ -7,7 +7,7 @@ DB_DIR = BASE_DIR / 'database'
 if not DB_DIR.exists():
     DB_DIR.mkdir(parents=True, exist_ok=True)
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('SECRET_KEY')
+SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-dev-only-key-change-in-production-abc123!@#')
 
 DATABASES = {
     'default': {
